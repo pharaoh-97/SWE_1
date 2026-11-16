@@ -1,0 +1,62 @@
+[project]
+name = "road-profile-viewer"
+version = "0.1.0"
+description = "Interactive 2D road profile viewer with camera ray intersection using Dash and Plotly"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dash>=2.14.0",
+    "plotly>=5.18.0",
+    "numpy>=1.26.0",
+]
+
+[project.scripts]
+road-profile-viewer = "road_profile_viewer.main:main"
+
+[build-system]
+requires = ["uv_build>=0.8.19,<0.9.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "plotly-stubs>=0.0.6",
+    "pyright>=1.1.406",
+    "pytest>=9.2.0",
+    "ruff>=0.14.0",
+]
+
+[tool.ruff]
+line-length = 120  # Increased from 88 to accommodate longer lines
+# Markdown nicht anfassen: Sonst formatiert ruff die Codebeispiele im README und zählt die Datei mit.
+extend-exclude = ["*.md"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "B", "C4", "UP"]
+
+[tool.ruff.format]
+line-ending = "lf"
+preview = true
+docstring-code-format = true
+
+[tool.pytest.ini_options]
+# uv run pytest sucht Tests nur in tests/. Sonst würde pytest auch manual_test.py laden, denn der Name passt zum
+# Muster *_test.py, und dabei den manuellen Test ausführen.
+testpaths = ["tests"]
+# Dash bringt ein eigenes pytest-Plugin mit. Wir brauchen es nicht, und es erzeugt bei jedem Lauf eine Warnung.
+addopts = "-p no:dash"
+
+[tool.pyright]
+# Strikte Type-Prüfung
+typeCheckingMode = "strict"
+
+# Nur Source-Dateien einschließen
+include = ["src"]
+# tests/ und manual_test.py enthalten Code wie auf den Folien (z. B. assert dist > 0, obwohl dist None sein kann).
+# ignore hält sie frei von Meldungen, auch im Editor: VS Code prüft geöffnete Dateien sonst trotz include.
+ignore = ["tests", "manual_test.py"]
+
+# Reporting-Optionen
+reportUnknownMemberType = "warning"
+reportUnknownParameterType = "warning"
+reportUnknownVariableType = "warning"
+reportUnknownArgumentType = "warning"
